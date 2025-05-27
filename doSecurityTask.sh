@@ -1,2 +1,2 @@
 source .venv/bin/activate
-python security_task2.py
+nohup python security_task3.py &
