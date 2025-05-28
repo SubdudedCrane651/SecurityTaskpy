@@ -24,9 +24,9 @@ def SaveMySQL():
   mydb.commit()
 
 def Security():
-    print(d)
+    print(formatted_dt)
     #awk 'match($6,/Failed/) -F { print $1, $2, $3,$6,$9,$11,$12,$13}' /var/log/auth.log
-    a = subprocess.Popen(["awk",'match($6,/Failed/) && /'+d+'/ -F { print $1, $2, $3,$6,$7,$9,$11,$12,$13,$14,$15;exit;}',"/var/log/auth.log"],
+    a = subprocess.Popen(["awk",'match($4,/Failed/) && /'+str(formatted_dt)+'/ -F { print $1, $2, $3,$6,$7,$9,$11,$12,$13,$14,$15,$16;exit;}',"/var/log/auth.log"],
     #a = subprocess.Popen(["awk",'/": Failed"/ && /'+d+'/ -F { print $1, $2, $3,$6,$11,$12,$13;exit;}',"/var/log/auth.log"],
     stdout = subprocess.PIPE)
     #output = str(a.communicate())
@@ -41,6 +41,8 @@ if __name__ == '__main__':
         from datetime import datetime, timedelta
         #take off a minute
         global d
+        global dt
+        global formatted_dt
         d = datetime.today() - timedelta(hours=0, minutes=0)
         t = datetime.today() - timedelta(hours=0, minutes=0)
         d = d.strftime("%b %d")
@@ -49,12 +51,15 @@ if __name__ == '__main__':
         for daystr in day:
          if d.find(daystr) !=-1:
           d=d.replace('0',' ')
-        d=d+' '+t
+        #d=d+' '+t
+        dt = datetime.today()
+        formatted_dt = dt.strftime("%Y-%m-%dT%H:%M:%S")
+        d=dt
         time.sleep(1)
-        #d="Mar  1 22:07:55"
+        #d="2025-05-27T19:31:29"
 
         with open('checked.txt','w') as file:
-           file.write('Checked the log file for failed messages. at '+d)
+           file.write('Checked the log file for failed messages. at '+str(d))
            failed = Security()
         if (failed):
             with open('Failed.txt','a+') as File:
